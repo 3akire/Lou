@@ -44,7 +44,7 @@ interface CycleLog {
 
 interface Message {
   id: string;
-  sender: "user" | "nora";
+  sender: "user" | "lou";
   text: string;
   timestamp: number;
   type?: "text" | "log-confirmation";
@@ -144,7 +144,7 @@ export default function LunaFlow() {
         // Trigger Morning Check-in
         const msg: Message = {
           id: "daily-checkin-" + Date.now(),
-          sender: "nora",
+          sender: "lou",
           text: `Good morning ${profile.name}! ☀️ Ready to log for today?`,
           timestamp: Date.now(),
         };
@@ -177,7 +177,7 @@ export default function LunaFlow() {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const systemPrompt = `
-      You are Nora, an empathetic cycle assistant.
+      You are <lou>, an empathetic cycle assistant.
       User: ${userProfile.name} | Goal: ${userProfile.preferences.goal}
       Recent logs: ${JSON.stringify(currentLogs.slice(-3))}
       
@@ -251,15 +251,15 @@ export default function LunaFlow() {
           aiResult.extracted_data.symptoms?.length > 0 ||
           aiResult.extracted_data.flow);
 
-      const noraMsg: Message = {
+      const louMsg: Message = {
         id: (Date.now() + 1).toString(),
-        sender: "nora",
+        sender: "lou",
         text: aiResult.response || aiResult.text, // Fallback if structure differs
         timestamp: Date.now(),
         type: hasData ? "log-confirmation" : "text",
         data: hasData ? aiResult.extracted_data : undefined,
       };
-      setChatHistory((prev) => [...prev, noraMsg]);
+      setChatHistory((prev) => [...prev, louMsg]);
 
       if (hasData) {
         const newLog: CycleLog = {
@@ -271,8 +271,6 @@ export default function LunaFlow() {
         };
         setLogs((prev) => [...prev, newLog]);
 
-        // Add a confirmation "system" message or just let Nora say it
-        // Nora's response should already cover it based on the prompt
       }
     } else {
       // Handle Onboarding via Chat
@@ -298,7 +296,7 @@ export default function LunaFlow() {
           ...prev,
           {
             id: Date.now().toString(),
-            sender: "nora",
+            sender: "lou",
             text: `Nice to meet you, ${input}! 🌙 What brings you here?`,
             timestamp: Date.now(),
           },
@@ -325,7 +323,7 @@ export default function LunaFlow() {
             🌙
           </div>
           <h1 className='text-3xl font-light text-slate-700 mb-3 tracking-wide'>
-            Hi, I&apos;m Nora
+            Hi, I&apos;m Lou
           </h1>
           <p className='text-slate-600 mb-8 leading-relaxed'>
             I&apos;m here to help you understand your cycle and yourself.
@@ -335,8 +333,8 @@ export default function LunaFlow() {
               setChatHistory([
                 {
                   id: "init",
-                  sender: "nora",
-                  text: "Hi! I'm Nora 🌙 What should I call you?",
+                  sender: "lou",
+                  text: "Hi! I'm Lou 🌙 What should I call you?",
                   timestamp: Date.now(),
                 },
               ]);
@@ -376,7 +374,7 @@ export default function LunaFlow() {
               🌙
             </div>
             <span className='text-xl font-light tracking-wide text-slate-700'>
-              LunaFlow
+              Lou
             </span>
           </div>
           <button
@@ -552,7 +550,7 @@ export default function LunaFlow() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-              placeholder="Tell Nora how you're feeling..."
+              placeholder="Tell Lou how you're feeling..."
               className='flex-1 bg-white/40 backdrop-blur-lg border border-white/50 rounded-2xl px-6 py-4 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-300/50 focus:bg-white/50 transition-all duration-300 shadow-inner'
             />
             <button

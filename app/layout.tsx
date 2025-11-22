@@ -1,22 +1,20 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+// app/layout.tsx
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "LunaFlow",
-  description: "Your empathetic cycle assistant",
+  title: 'HealthTrack - Salute Mestruale',
+  description: 'App per il monitoraggio della salute mestruale con AI',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang='en'>
-      <body className={inter.className}>{children}</body>
+    <html lang="it">
+      <body>{children}</body>
     </html>
   );
 }
