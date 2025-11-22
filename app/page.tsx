@@ -10,11 +10,58 @@ import {
   User,
   Cloud,
   Sparkles,
+  Home,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
+
+// --- Components ---
+
+const Mascot = () => {
+  return (
+    <div className='relative w-40 h-40 mx-auto mb-6 cursor-pointer group'>
+      {/* Glow */}
+      <motion.div
+        className='absolute inset-0 bg-purple-200/50 rounded-full blur-2xl'
+        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Body */}
+      <motion.div
+        className='relative w-full h-full bg-linear-to-tr from-purple-100 via-white to-purple-50 rounded-full shadow-[inset_-10px_-10px_20px_rgba(0,0,0,0.05),0_10px_20px_rgba(0,0,0,0.05)] border border-white/60 flex items-center justify-center overflow-hidden'
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        whileHover={{ scale: 1.05, rotate: 5 }}
+      >
+        {/* Face Container */}
+        <div className='relative w-full h-full flex flex-col items-center justify-center pt-4'>
+          {/* Eyes */}
+          <div className='flex gap-6 mb-3'>
+            <motion.div
+              className='w-3 h-4 bg-slate-700/80 rounded-full'
+              animate={{ scaleY: [1, 0.1, 1] }}
+              transition={{ repeat: Infinity, repeatDelay: 3.5, duration: 0.2 }}
+            />
+            <motion.div
+              className='w-3 h-4 bg-slate-700/80 rounded-full'
+              animate={{ scaleY: [1, 0.1, 1] }}
+              transition={{ repeat: Infinity, repeatDelay: 3.5, duration: 0.2 }}
+            />
+          </div>
+          {/* Mouth */}
+          <div className='w-6 h-3 border-b-[3px] border-slate-700/80 rounded-full opacity-80 group-hover:h-4 group-hover:border-b-4 transition-all duration-300' />
+
+          {/* Cheeks */}
+          <div className='absolute top-1/2 left-6 w-4 h-2 bg-pink-300/40 rounded-full blur-sm' />
+          <div className='absolute top-1/2 right-6 w-4 h-2 bg-pink-300/40 rounded-full blur-sm' />
+        </div>
+      </motion.div>
+    </div>
+  );
+};
 
 // --- Types ---
 
@@ -66,7 +113,9 @@ export default function LunaFlow() {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [view, setView] = useState<"chat" | "dashboard" | "profile">("chat");
+  const [view, setView] = useState<"home" | "chat" | "dashboard" | "profile">(
+    "home"
+  );
   const [apiKey, setApiKey] = useState(""); // In a real app, use env var
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
@@ -315,7 +364,7 @@ export default function LunaFlow() {
   if (!profile && !chatHistory.length) {
     // Initial Onboarding Trigger
     return (
-      <div className='min-h-screen bg-gradient-to-br from-[#f5f3ff] via-[#faf5ff] to-[#f0fdf4] flex items-center justify-center p-6'>
+      <div className='min-h-screen bg-linear-to-br from-[#f5f3ff] via-[#faf5ff] to-[#f0fdf4] flex items-center justify-center p-6'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -341,7 +390,7 @@ export default function LunaFlow() {
                 },
               ]);
             }}
-            className='px-8 py-4 bg-gradient-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 font-light shadow-[0_8px_32px_rgba(31,38,135,0.1)] hover:shadow-[0_12px_40px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-500 active:scale-100'
+            className='px-8 py-4 bg-linear-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 font-light shadow-[0_8px_32px_rgba(31,38,135,0.1)] hover:shadow-[0_12px_40px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-500 active:scale-100'
           >
             Get Started
           </button>
@@ -353,7 +402,7 @@ export default function LunaFlow() {
   return (
     <div
       className={cn(
-        "min-h-screen bg-gradient-to-br text-slate-700 font-sans relative overflow-hidden transition-colors duration-1000",
+        "min-h-screen bg-linear-to-br text-slate-700 font-sans relative overflow-hidden transition-colors duration-1000",
         getTheme()
       )}
     >
@@ -425,6 +474,53 @@ export default function LunaFlow() {
 
       {/* Main Content */}
       <main className='pt-24 pb-32 max-w-md mx-auto min-h-screen px-6'>
+        {view === "home" && (
+          <div className='flex flex-col items-center justify-center min-h-[60vh] animate-fadeIn pt-4'>
+            <Mascot />
+
+            {/* Advice Bubble */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className='bg-white/40 backdrop-blur-xl border border-white/50 p-6 rounded-3xl rounded-tl-sm shadow-sm max-w-xs text-center mb-10 relative'
+            >
+              <p className='text-slate-700 text-lg font-light leading-relaxed'>
+                &quot;Day 14: You&apos;re glowing today! ✨ Creativity is high,
+                so capture those ideas.&quot;
+              </p>
+              {/* Triangle for speech bubble */}
+              <div className='absolute -top-3 left-8 w-0 h-0 border-l-10 border-l-transparent border-b-15 border-b-white/40 border-r-10 border-r-transparent' />
+            </motion.div>
+
+            {/* Quick Actions */}
+            <div className='grid grid-cols-2 gap-4 w-full'>
+              <button
+                onClick={() => setView("chat")}
+                className='p-5 bg-white/30 hover:bg-white/50 border border-white/40 rounded-3xl flex flex-col items-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-sm group'
+              >
+                <div className='w-12 h-12 bg-purple-100/50 rounded-full flex items-center justify-center text-purple-500 group-hover:bg-purple-100 transition-colors'>
+                  <Send size={24} strokeWidth={1.5} />
+                </div>
+                <span className='text-sm font-medium text-slate-600'>
+                  Log Symptoms
+                </span>
+              </button>
+              <button
+                onClick={() => setView("dashboard")}
+                className='p-5 bg-white/30 hover:bg-white/50 border border-white/40 rounded-3xl flex flex-col items-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-sm group'
+              >
+                <div className='w-12 h-12 bg-emerald-100/50 rounded-full flex items-center justify-center text-emerald-500 group-hover:bg-emerald-100 transition-colors'>
+                  <BarChart2 size={24} strokeWidth={1.5} />
+                </div>
+                <span className='text-sm font-medium text-slate-600'>
+                  View Insights
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {view === "chat" && (
           <div className='flex flex-col gap-6'>
             {chatHistory.map((msg) => (
@@ -435,7 +531,7 @@ export default function LunaFlow() {
                 className={cn(
                   "max-w-[85%] p-5 rounded-3xl shadow-sm text-base leading-relaxed font-light tracking-wide",
                   msg.sender === "user"
-                    ? "self-end bg-gradient-to-r from-purple-100/60 to-pink-100/60 backdrop-blur-lg border border-white/40 shadow-[0_4px_16px_rgba(31,38,135,0.06)] text-slate-700 rounded-tr-sm"
+                    ? "self-end bg-linear-to-r from-purple-100/60 to-pink-100/60 backdrop-blur-lg border border-white/40 shadow-[0_4px_16px_rgba(31,38,135,0.06)] text-slate-700 rounded-tr-sm"
                     : "self-start bg-white/40 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(31,38,135,0.08)] text-slate-700 rounded-tl-sm"
                 )}
               >
@@ -557,7 +653,7 @@ export default function LunaFlow() {
             />
             <button
               onClick={handleSendMessage}
-              className='p-4 bg-gradient-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 hover:shadow-[0_8px_20px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-300 active:scale-95 shadow-[0_4px_16px_rgba(31,38,135,0.1)]'
+              className='p-4 bg-linear-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 hover:shadow-[0_8px_20px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-300 active:scale-95 shadow-[0_4px_16px_rgba(31,38,135,0.1)]'
             >
               <Send size={20} strokeWidth={1.5} />
             </button>
@@ -566,6 +662,29 @@ export default function LunaFlow() {
 
         {/* Bottom Nav */}
         <div className='max-w-md mx-auto px-8 py-4 flex justify-between items-center text-slate-400'>
+          <button
+            onClick={() => setView("home")}
+            className={cn(
+              "flex flex-col items-center gap-1 transition-all duration-300",
+              view === "home"
+                ? "text-purple-400 scale-105"
+                : "hover:text-slate-500"
+            )}
+          >
+            <div
+              className={cn(
+                "p-2 rounded-2xl transition-all duration-500",
+                view === "home" && "bg-white/50 shadow-sm"
+              )}
+            >
+              <Home
+                size={22}
+                strokeWidth={1.5}
+                className={view === "home" ? "fill-purple-100" : ""}
+              />
+            </div>
+            <span className='text-[10px] font-medium tracking-wide'>Home</span>
+          </button>
           <button
             onClick={() => setView("chat")}
             className={cn(
