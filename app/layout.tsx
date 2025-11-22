@@ -1,10 +1,10 @@
 // app/layout.tsx
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'HealthTrack - Salute Mestruale',
-  description: 'App per il monitoraggio della salute mestruale con AI',
+  title: "LouGent",
+  description: "Your empathetic cycle assistant",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="it">
+    <html lang='it'>
       <body>{children}</body>
     </html>
   );

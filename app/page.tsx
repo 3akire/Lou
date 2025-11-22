@@ -7,14 +7,15 @@ import {
   Settings,
   Heart,
   Zap,
-  User,
   Cloud,
   Sparkles,
+  Home,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
+import { CottonMascot } from "../components/CottonMascot";
 
 // --- Types ---
 
@@ -44,7 +45,7 @@ interface CycleLog {
 
 interface Message {
   id: string;
-  sender: "user" | "lou";
+  sender: "user" | "Lou";
   text: string;
   timestamp: number;
   type?: "text" | "log-confirmation";
@@ -59,14 +60,14 @@ function cn(...inputs: (string | undefined | null | false)[]) {
 
 // --- Main Component ---
 
-export default function LunaFlow() {
+export default function LouGent() {
   // State
   const [profile, setProfile] = useState<Profile | null>(null);
   const [logs, setLogs] = useState<CycleLog[]>([]);
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [view, setView] = useState<"chat" | "dashboard" | "profile">("chat");
+  const [view, setView] = useState<"home" | "chat" | "dashboard">("home");
   const [apiKey, setApiKey] = useState(""); // In a real app, use env var
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
@@ -144,7 +145,7 @@ export default function LunaFlow() {
         // Trigger Morning Check-in
         const msg: Message = {
           id: "daily-checkin-" + Date.now(),
-          sender: "lou",
+          sender: "Lou",
           text: `Good morning ${profile.name}! ☀️ Ready to log for today?`,
           timestamp: Date.now(),
         };
@@ -177,7 +178,7 @@ export default function LunaFlow() {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const systemPrompt = `
-      You are <lou>, an empathetic cycle assistant.
+      You are Lou, an empathetic cycle assistant.
       User: ${userProfile.name} | Goal: ${userProfile.preferences.goal}
       Recent logs: ${JSON.stringify(currentLogs.slice(-3))}
       
@@ -251,15 +252,15 @@ export default function LunaFlow() {
           aiResult.extracted_data.symptoms?.length > 0 ||
           aiResult.extracted_data.flow);
 
-      const louMsg: Message = {
+      const LouMsg: Message = {
         id: (Date.now() + 1).toString(),
-        sender: "lou",
+        sender: "Lou",
         text: aiResult.response || aiResult.text, // Fallback if structure differs
         timestamp: Date.now(),
         type: hasData ? "log-confirmation" : "text",
         data: hasData ? aiResult.extracted_data : undefined,
       };
-      setChatHistory((prev) => [...prev, louMsg]);
+      setChatHistory((prev) => [...prev, LouMsg]);
 
       if (hasData) {
         const newLog: CycleLog = {
@@ -271,6 +272,8 @@ export default function LunaFlow() {
         };
         setLogs((prev) => [...prev, newLog]);
 
+        // Add a confirmation "system" message or just let Lou say it
+        // Lou's response should already cover it based on the prompt
       }
     } else {
       // Handle Onboarding via Chat
@@ -296,7 +299,7 @@ export default function LunaFlow() {
           ...prev,
           {
             id: Date.now().toString(),
-            sender: "lou",
+            sender: "Lou",
             text: `Nice to meet you, ${input}! 🌙 What brings you here?`,
             timestamp: Date.now(),
           },
@@ -313,7 +316,7 @@ export default function LunaFlow() {
   if (!profile && !chatHistory.length) {
     // Initial Onboarding Trigger
     return (
-      <div className='min-h-screen bg-gradient-to-br from-[#f5f3ff] via-[#faf5ff] to-[#f0fdf4] flex items-center justify-center p-6'>
+      <div className='min-h-screen bg-linear-to-br from-[#f5f3ff] via-[#faf5ff] to-[#f0fdf4] flex items-center justify-center p-6'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -333,13 +336,13 @@ export default function LunaFlow() {
               setChatHistory([
                 {
                   id: "init",
-                  sender: "lou",
+                  sender: "Lou",
                   text: "Hi! I'm Lou 🌙 What should I call you?",
                   timestamp: Date.now(),
                 },
               ]);
             }}
-            className='px-8 py-4 bg-gradient-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 font-light shadow-[0_8px_32px_rgba(31,38,135,0.1)] hover:shadow-[0_12px_40px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-500 active:scale-100'
+            className='px-8 py-4 bg-linear-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 font-light shadow-[0_8px_32px_rgba(31,38,135,0.1)] hover:shadow-[0_12px_40px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-500 active:scale-100'
           >
             Get Started
           </button>
@@ -351,7 +354,7 @@ export default function LunaFlow() {
   return (
     <div
       className={cn(
-        "min-h-screen bg-gradient-to-br text-slate-700 font-sans relative overflow-hidden transition-colors duration-1000",
+        "min-h-screen bg-linear-to-br text-slate-700 font-sans relative overflow-hidden transition-colors duration-1000",
         getTheme()
       )}
     >
@@ -370,11 +373,15 @@ export default function LunaFlow() {
       <header className='fixed top-0 w-full bg-white/30 backdrop-blur-xl z-10 border-b border-white/40 shadow-[0_4px_30px_rgba(0,0,0,0.03)]'>
         <div className='max-w-md mx-auto px-6 h-20 flex items-center justify-between'>
           <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-lg shadow-sm border border-white/50'>
-              🌙
+            <div className='w-10 h-10 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-lg shadow-sm border border-white/50 overflow-hidden'>
+              <CottonMascot
+                mode='chat'
+                state={isTyping ? "thinking" : "idle"}
+                className='w-full h-full'
+              />
             </div>
             <span className='text-xl font-light tracking-wide text-slate-700'>
-              Lou
+              LouGent
             </span>
           </div>
           <button
@@ -423,6 +430,53 @@ export default function LunaFlow() {
 
       {/* Main Content */}
       <main className='pt-24 pb-32 max-w-md mx-auto min-h-screen px-6'>
+        {view === "home" && (
+          <div className='flex flex-col items-center justify-center min-h-[60vh] animate-fadeIn pt-4'>
+            <CottonMascot mode='home' />
+
+            {/* Advice Bubble */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className='bg-white/40 backdrop-blur-xl border border-white/50 p-6 rounded-3xl rounded-tl-sm shadow-sm max-w-xs text-center mb-10 relative'
+            >
+              <p className='text-slate-700 text-lg font-light leading-relaxed'>
+                &quot;Day 14: You&apos;re glowing today! ✨ Creativity is high,
+                so capture those ideas.&quot;
+              </p>
+              {/* Triangle for speech bubble */}
+              <div className='absolute -top-3 left-8 w-0 h-0 border-l-10 border-l-transparent border-b-15 border-b-white/40 border-r-10 border-r-transparent' />
+            </motion.div>
+
+            {/* Quick Actions */}
+            <div className='grid grid-cols-2 gap-4 w-full'>
+              <button
+                onClick={() => setView("chat")}
+                className='p-5 bg-white/30 hover:bg-white/50 border border-white/40 rounded-3xl flex flex-col items-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-sm group'
+              >
+                <div className='w-12 h-12 bg-purple-100/50 rounded-full flex items-center justify-center text-purple-500 group-hover:bg-purple-100 transition-colors'>
+                  <Send size={24} strokeWidth={1.5} />
+                </div>
+                <span className='text-sm font-medium text-slate-600'>
+                  Log Symptoms
+                </span>
+              </button>
+              <button
+                onClick={() => setView("dashboard")}
+                className='p-5 bg-white/30 hover:bg-white/50 border border-white/40 rounded-3xl flex flex-col items-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-sm group'
+              >
+                <div className='w-12 h-12 bg-emerald-100/50 rounded-full flex items-center justify-center text-emerald-500 group-hover:bg-emerald-100 transition-colors'>
+                  <BarChart2 size={24} strokeWidth={1.5} />
+                </div>
+                <span className='text-sm font-medium text-slate-600'>
+                  View Insights
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {view === "chat" && (
           <div className='flex flex-col gap-6'>
             {chatHistory.map((msg) => (
@@ -433,7 +487,7 @@ export default function LunaFlow() {
                 className={cn(
                   "max-w-[85%] p-5 rounded-3xl shadow-sm text-base leading-relaxed font-light tracking-wide",
                   msg.sender === "user"
-                    ? "self-end bg-gradient-to-r from-purple-100/60 to-pink-100/60 backdrop-blur-lg border border-white/40 shadow-[0_4px_16px_rgba(31,38,135,0.06)] text-slate-700 rounded-tr-sm"
+                    ? "self-end bg-linear-to-r from-purple-100/60 to-pink-100/60 backdrop-blur-lg border border-white/40 shadow-[0_4px_16px_rgba(31,38,135,0.06)] text-slate-700 rounded-tr-sm"
                     : "self-start bg-white/40 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(31,38,135,0.08)] text-slate-700 rounded-tl-sm"
                 )}
               >
@@ -555,7 +609,7 @@ export default function LunaFlow() {
             />
             <button
               onClick={handleSendMessage}
-              className='p-4 bg-gradient-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 hover:shadow-[0_8px_20px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-300 active:scale-95 shadow-[0_4px_16px_rgba(31,38,135,0.1)]'
+              className='p-4 bg-linear-to-r from-purple-200/60 to-pink-200/60 backdrop-blur-xl border border-white/50 rounded-full text-slate-700 hover:shadow-[0_8px_20px_rgba(31,38,135,0.15)] hover:scale-105 transition-all duration-300 active:scale-95 shadow-[0_4px_16px_rgba(31,38,135,0.1)]'
             >
               <Send size={20} strokeWidth={1.5} />
             </button>
@@ -564,6 +618,29 @@ export default function LunaFlow() {
 
         {/* Bottom Nav */}
         <div className='max-w-md mx-auto px-8 py-4 flex justify-between items-center text-slate-400'>
+          <button
+            onClick={() => setView("home")}
+            className={cn(
+              "flex flex-col items-center gap-1 transition-all duration-300",
+              view === "home"
+                ? "text-purple-400 scale-105"
+                : "hover:text-slate-500"
+            )}
+          >
+            <div
+              className={cn(
+                "p-2 rounded-2xl transition-all duration-500",
+                view === "home" && "bg-white/50 shadow-sm"
+              )}
+            >
+              <Home
+                size={22}
+                strokeWidth={1.5}
+                className={view === "home" ? "fill-purple-100" : ""}
+              />
+            </div>
+            <span className='text-[10px] font-medium tracking-wide'>Home</span>
+          </button>
           <button
             onClick={() => setView("chat")}
             className={cn(
@@ -610,31 +687,6 @@ export default function LunaFlow() {
             </div>
             <span className='text-[10px] font-medium tracking-wide'>
               Insights
-            </span>
-          </button>
-          <button
-            onClick={() => setView("profile")}
-            className={cn(
-              "flex flex-col items-center gap-1 transition-all duration-300",
-              view === "profile"
-                ? "text-purple-400 scale-105"
-                : "hover:text-slate-500"
-            )}
-          >
-            <div
-              className={cn(
-                "p-2 rounded-2xl transition-all duration-500",
-                view === "profile" && "bg-white/50 shadow-sm"
-              )}
-            >
-              <User
-                size={22}
-                strokeWidth={1.5}
-                className={view === "profile" ? "fill-purple-100" : ""}
-              />
-            </div>
-            <span className='text-[10px] font-medium tracking-wide'>
-              Profile
             </span>
           </button>
         </div>
